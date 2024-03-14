@@ -28,13 +28,17 @@ def bus_list(request):
             }
         )
     response = HttpResponse(json.dumps({'csrftoken': csrf_token, 'bus_list': bus_list}), content_type="application/json")
+    response['Access-Control-Allow-Origin'] = '*'
+    response['Access-Control-Allow-Headers'] = '*, X-CSRFToken'
     print(csrf_token)
     return response
 
 
 def reserve_seat(request):
-    print(request)
-    response = Bus.objects.filter(uuid=request.id).update(seats_available=seats_available-1)
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    print(body)
+    response = Bus.objects.filter(uuid=body['id'])
     print(response)
     return HttpResponse(
         json.dumps("this is reserve seat"), content_type="application/json"
