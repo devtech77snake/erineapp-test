@@ -41,7 +41,7 @@ def reserve_seat(request):
             bus.seats_available -= 1
             bus.save()
             print(bus)
-            response = HttpResponse(json.dumps({"status": "success", "err_msg": ""}), content_type="application/json", status=200)
+            response = HttpResponse(json.dumps({"status": "success", "data": {"available_seats": bus.seats_available, "max_seats": bus.max_seats}, "err_msg": ""}), content_type="application/json", status=200)
             return response
     except IntegrityError as e:
         print(f"Integrity error occurred: {e}")
