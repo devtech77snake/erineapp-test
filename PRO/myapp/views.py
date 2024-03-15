@@ -33,12 +33,17 @@ def reserve_seat(request):
     try:
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
+        busId = body['id']
+        flag = body['flag']
         print(body)
-        bus = Bus.objects.get(uuid=body['id'])
+        bus = Bus.objects.get(uuid=busId)
         if (bus.seats_available == 0):
             response = HttpResponse(json.dumps({"status": "fail", "err_msg": "No available seat in this bus"}), content_type="application/json", status=200)
         else:
-            bus.seats_available -= 1
+            if flag == 1:
+                bus.seats_available -= 1
+            elif flag == -1:
+                bus.seats_available += 1
             bus.save()
             print(bus)
             response = HttpResponse(json.dumps({"status": "success", "data": {"available_seats": bus.seats_available, "max_seats": bus.max_seats}, "err_msg": ""}), content_type="application/json", status=200)
@@ -49,9 +54,3 @@ def reserve_seat(request):
     except Exception as e:
         print(f"An error occurred: {e}")
         response = HttpResponse(json.dumps({"status": "fail", "err_msg": e}), content_type="application/json", status=400)
-        
-
-def unreserve_seat(request):
-    return HttpResponse(
-        json.dumps("this is unreserve seat"), content_type="application/json"
-    )

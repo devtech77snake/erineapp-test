@@ -23,5 +23,4 @@ urlpatterns = [
     path("hello/", views.hello, name="hello"),
     path("bus/list", views.bus_list, name="bus_list"),
     path("bus/reserve", views.reserve_seat, name="reserve_seat"),
-    path("bus/unreserve", views.unreserve_seat, name="unreserve_seat"),
 ]
