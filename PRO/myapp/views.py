@@ -11,8 +11,6 @@ def hello(request):
 
 
 def bus_list(request):
-    print(request.META['HTTP_HOST'])
-    csrf_token = get_token(request)
     buses = Bus.objects.all()
     bus_list = []
     for i, bus in enumerate(buses):
@@ -27,23 +25,31 @@ def bus_list(request):
                 "status_display": bus.get_status_display(),
             }
         )
-    response = HttpResponse(json.dumps({'csrftoken': csrf_token, 'bus_list': bus_list}), content_type="application/json")
-    response['Access-Control-Allow-Origin'] = '*'
-    response['Access-Control-Allow-Headers'] = '*, X-CSRFToken'
-    print(csrf_token)
+    response = HttpResponse(json.dumps(bus_list), content_type="application/json")
     return response
 
 
 def reserve_seat(request):
-    body_unicode = request.body.decode('utf-8')
-    body = json.loads(body_unicode)
-    print(body)
-    response = Bus.objects.filter(uuid=body['id'])
-    print(response)
-    return HttpResponse(
-        json.dumps("this is reserve seat"), content_type="application/json"
-    )
-
+    try:
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        print(body)
+        bus = Bus.objects.get(uuid=body['id'])
+        if (bus.seats_available == 0):
+            response = HttpResponse(json.dumps({"status": "fail", "err_msg": "No available seat in this bus"}), content_type="application/json", status=200)
+        else:
+            bus.seats_available -= 1
+            bus.save()
+            print(bus)
+            response = HttpResponse(json.dumps({"status": "success", "err_msg": ""}), content_type="application/json", status=200)
+            return response
+    except IntegrityError as e:
+        print(f"Integrity error occurred: {e}")
+        response = HttpResponse(json.dumps({"status": "fail", "err_msg": e}), content_type="application/json", status=400)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        response = HttpResponse(json.dumps({"status": "fail", "err_msg": e}), content_type="application/json", status=400)
+        
 
 def unreserve_seat(request):
     return HttpResponse(
