@@ -64,7 +64,9 @@
 								var action = document.createElement('div');
 								action.className = 'col-3';
 								var button = document.createElement('button');
-								button.addEventListener('click', () => reserveSeat(x.id));
+								button.id = 'action_' + x.id;
+								button.onclick = () => reserveSeat(x.id, 1);
+								// button.addEventListener('click', () => reserveSeat(x.id, 1));
 								button.innerText = 'Reserve';
 								if (x.available_seats == 0) {
 									button.disabled = true;
@@ -97,14 +99,15 @@
 					});
 			};
 
-			const reserveSeat = (busId) => {
+			// reserve or unreserve seat: flag=1 -> reserve, flag=-1 -> unreserve
+			const reserveSeat = (busId, flag) => {
 				const apiUrl = 'http://localhost:8000/bus/reserve';
 				fetch(apiUrl, {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',
 					},
-					body: JSON.stringify({ id: busId }),
+					body: JSON.stringify({ id: busId, flag: flag }),
 				})
 					.then((res) => {
 						const response = res.json();
@@ -116,30 +119,18 @@
 					.then((body) => {
 						console.log(body);
 						if (body.status == 'success') {
-							window.alert('Seat reserved successfully!');
+							window.alert('Seat ' + flag == 1 ? 'reserved' : 'unreserved' + ' successfully!');
+							// reset the available seats
 							var bus_seats = document.getElementById('seats_' + busId);
 							bus_seats.innerText = body.data.available_seats + ' / ' + body.data.max_seats;
+							// reset the action (1: reserve action, -1: unreserve action)
+							var bus_action = document.getElementById('action_' + busId);
+							bus_action.onclick = () => reserveSeat(busId, flag * -1);
+							bus_action.innerText = flag == 1 ? 'Unreserve' : 'Reserve';
 						}
 					})
 					.catch((err) => {
 						console.log('===> error reserveSeat ', err);
-					});
-			};
-
-			const unreserveSeat = (busId) => {
-				const apiUrl = 'http://localhost:8000/bus/unreserve';
-				fetch(apiUrl)
-					.then((res) => {
-						if (!res.ok) {
-							throw new Error('Network resonse was not ok');
-						}
-						return res.json();
-					})
-					.then((body) => {
-						console.log(body);
-					})
-					.catch((err) => {
-						console.log('===> error unreserveSeat ', err);
 					});
 			};
 
