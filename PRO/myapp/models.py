@@ -8,7 +8,7 @@ class Driver(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     birth_date = models.DateField(auto_now=False, auto_now_add=False, default=None)
-    years_of_experience = models.CharField(max_length=10)
+    years_of_experience = models.IntegerField()
     date_joined = models.DateTimeField(auto_now=False, auto_now_add=False)
 
 

@@ -5,11 +5,6 @@ from django.http import HttpResponse
 from .models import Bus, Driver
 
 
-# Create your views here.
-def hello(request):
-    return HttpResponse("hello world")
-
-
 def bus_list(request):
     buses = Bus.objects.all()
     bus_list = []
@@ -37,17 +32,17 @@ def reserve_seat(request):
         flag = body['flag']
         print(body)
         bus = Bus.objects.get(uuid=busId)
-        if (bus.seats_available == 0):
-            response = HttpResponse(json.dumps({"status": "fail", "err_msg": "No available seat in this bus"}), content_type="application/json", status=200)
-        else:
-            if flag == 1:
-                bus.seats_available -= 1
-            elif flag == -1:
-                bus.seats_available += 1
+        if (flag == 1 and not bus.seats_available == 0):
+            bus.seats_available -= 1
             bus.save()
-            print(bus)
             response = HttpResponse(json.dumps({"status": "success", "data": {"available_seats": bus.seats_available, "max_seats": bus.max_seats}, "err_msg": ""}), content_type="application/json", status=200)
-            return response
+        elif (flag == -1 and not bus.seats_available == bus.max_seats):
+            bus.seats_available += 1
+            bus.save()
+            response = HttpResponse(json.dumps({"status": "success", "data": {"available_seats": bus.seats_available, "max_seats": bus.max_seats}, "err_msg": ""}), content_type="application/json", status=200)
+        else:
+            response = HttpResponse(json.dumps({"status": "fail", "err_msg": "No available seat in this bus"}), content_type="application/json", status=200)
+        return response
     except IntegrityError as e:
         print(f"Integrity error occurred: {e}")
         response = HttpResponse(json.dumps({"status": "fail", "err_msg": e}), content_type="application/json", status=400)
