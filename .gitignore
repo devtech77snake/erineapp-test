@@ -3,4 +3,5 @@
 db.sqlite3
 __pycache__
 .venv
+.python-version
 node_modules

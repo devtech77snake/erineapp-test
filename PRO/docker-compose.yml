@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  web:
+    build: ./
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - 8000:8000
+    env_file:
+      - ./PRO/.env
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=myapp
+      - DB_USER=postgres
+      - DB_PASSWORD=QWE!@#qwe123
+      - DB_HOST=db
+      - DB_PORT=5432
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=myapp
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=QWE!@#qwe123
+      - PGDATA=/var/lib/postgresql/data/pgdata
+
+volumes:
+  postgres_data:

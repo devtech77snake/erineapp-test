@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 import environ
 
@@ -30,7 +31,7 @@ SECRET_KEY = "django-insecure-8)#44$9ii2q$h)n2i6@0v+#vy9_p-wt84=-0x=1u1i8zqz^tj*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -84,12 +85,17 @@ WSGI_APPLICATION = "PRO.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        # "PASSWORD": env("DB_PASSWORD"),
-        "PASSWORD": "QWE!@#qwe123",
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+        # "NAME": env("DB_NAME"),
+        # "USER": env("DB_USER"),
+        # # "PASSWORD": env("DB_PASSWORD"),
+        # "PASSWORD": "QWE!@#qwe123",
+        # "HOST": env("DB_HOST"),
+        # "PORT": env("DB_PORT"),
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
 
@@ -141,7 +147,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost'
+    'http://localhost:8000', 'http://127.0.0.1:8000', 'http://localhost', 'http://0.0.0.0:8000'
 ]
 
 CORS_ALLOW_ALL_HEADERS = True
