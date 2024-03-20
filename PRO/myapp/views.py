@@ -2,6 +2,7 @@ import json
 from django.middleware.csrf import get_token
 from django.core import serializers
 from django.http import HttpResponse
+from psycopg2 import IntegrityError
 from .models import Bus, Driver
 
 
