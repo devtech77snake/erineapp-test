@@ -1,5 +1,7 @@
 # erineapp-test
 
+## Run App
+
 This is bus station app, users can reserve and unreserve seat, admin can register bus and driver and manage them.
 
 First, clone this repository.
@@ -49,3 +51,19 @@ npm start
 Frontend: http://127.0.0.1:8080
 
 Backend Admin: http://127.0.0.1:8000/admin
+
+## Test App
+
+After run backend, follow these commands.
+
+```
+docker-compose exec web pytest
+```
+
+Regarding the frontend, follow these commands.
+
+```
+cd client
+
+npm test
+```
